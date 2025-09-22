@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="https://z-p3-scontent.fpnh18-1.fna.fbcdn.net/v/t39.30808-6/537398187_1928873574578354_3774886075793829064_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=110&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeH4p8XFzdbxMJVfvy93JHurSssMyFJ7FddKywzIUnsV1yE0NDgqdpxlJWIecP704gHhgbWQHoYFUpbhucc-UIUg&_nc_ohc=HC--u4vhZxgQ7kNvwHWHmcE&_nc_oc=AdlJ4igNlUnB6dHFv-_PoRop84fa9jcH0cjFbg7U6PxB56-K-EKeXRsuLkEFE1OTJIw&_nc_zt=23&_nc_ht=z-p3-scontent.fpnh18-1.fna&_nc_gid=Wzc85HKH4OoWdkUdz2LGRw&oh=00_AfaWCbzbjWEP2lOcI-e9DXHbzmUTLUJXlV6KoFpT__LKug&oe=68D732D6">
+  <title>Fuel Price Board</title>
+  <style>
+    body {
+      font-family: "Khmer OS Battambang", Arial, sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      gap: 20px;
+    }
+
+    .board {
+      background: #fff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+      max-width: 500px;
+      width: 100%;
+      margin-top: 1rem;
+      overflow: hidden;
+    }
+
+    /* Title and subtitle */
+    .board h2 {
+      font-size: 22px;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #333;
+      text-align: center;
+    }
+
+    .board h3 {
+      font-size: 16px;
+      font-weight: normal;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #666;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+
+    table tr {
+      transition: all 0.2s ease;
+    }
+
+    table tr:hover {
+      transform: scale(1.02);
+      box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+    }
+
+    table td {
+      padding: 12px 8px;
+      font-size: 16px;
+      color: #333;
+    }
+
+    table td:last-child {
+      text-align: right;
+      font-weight: bold;
+      font-size: 17px;
+    }
+
+    /* Colors */
+    .mogas { background: #e3f2fd; color: #0d47a1; }
+    .super { background: #ffebee; color: #b71c1c; }
+    .diesel { background: #e8f5e9; color: #1b5e20; }
+    .gas   { background: #fff3e0; color: #e65100; }
+
+    .location {
+      border-top: 1px solid #ddd;
+      padding-top: 12px;
+      font-size: 14px;
+      color: #555;
+      background: #fafafa;
+    }
+
+    .location span {
+      display: block;
+      margin-top: 6px;
+      font-size: 13px;
+      color: #666;
+    }
+
+    /* Form */
+    .editor {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+
+    .editor h4 {
+      margin-bottom: 10px;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .editor label {
+      display: block;
+      margin: 6px 0 2px;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .editor input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .editor button {
+      background: #004d99;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .editor button:hover {
+      background: #0066cc;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .board h2 { font-size: 18px; }
+      .board h3 { font-size: 14px; }
+      table td { font-size: 14px; padding: 10px; }
+      table td:last-child { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="board">
+    <h2 style="font-family: Khmer OS Muol Light;">ស្ថានីយប្រេងឥន្ធនៈ និង ហ្គាស អ៊ុំ សុគន្ធី</h2>
+    <h3 style="font-family: Khmer OS Muol Light;">(ស្រុកក្រឡាញ់ ខេត្តសៀមរាប)</h3>
+    
+    <table>
+      <tr class="mogas">
+        <td>⛽ សាំងធម្មតា (Mogas 92)</td>
+        <td id="price-mogas">3700៛ / លីត្រ</td>
+      </tr>
+      <tr class="super">
+        <td>🚀 សាំងស៊ុបពែរ (Super 95)</td>
+        <td id="price-super">4400៛ / លីត្រ</td>
+      </tr>
+      <tr class="diesel">
+        <td>🛻 ម៉ាស៊ូត (Diesel 90)</td>
+        <td id="price-diesel">3300៛ / លីត្រ</td>
+      </tr>
+      <tr class="gas">
+        <td>🔥 ហ្គាស (Gas)</td>
+        <td id="price-gas">1750៛ / លីត្រ</td>
+      </tr>
+    </table>
+
+    <div class="location">
+      🗺️តាមបណ្ដោយផ្លូវជាតិលេខ 6 ជិតឆ្លងស្ពានចូលទៅកាន់ <strong>ខេត្ត​ បន្ទាយមានជ័យ</strong>
+      <span>🗺️ NR6, Border with Banteay Meanchey Province</span>
+    </div>
+  </div>
+
+  <!-- Price Editor -->
+  <div class="editor">
+    <h4>Update Prices</h4>
+    <label for="mogas">Mogas 92:</label>
+    <input type="number" id="mogas" placeholder="Enter price...">
+
+    <label for="super">Super 95:</label>
+    <input type="number" id="super" placeholder="Enter price...">
+
+    <label for="diesel">Diesel 90:</label>
+    <input type="number" id="diesel" placeholder="Enter price...">
+
+    <label for="gas">Gas:</label>
+    <input type="number" id="gas" placeholder="Enter price...">
+
+    <button onclick="updatePrices()">Update Board</button>
+  </div>
+
+  <script>
+    function updatePrices() {
+      let mogas = document.getElementById('mogas').value;
+      let super95 = document.getElementById('super').value;
+      let diesel = document.getElementById('diesel').value;
+      let gas = document.getElementById('gas').value;
+
+      if (mogas) document.getElementById('price-mogas').textContent = mogas + '៛ / លីត្រ';
+      if (super95) document.getElementById('price-super').textContent = super95 + '៛ / លីត្រ';
+      if (diesel) document.getElementById('price-diesel').textContent = diesel + '៛ / លីត្រ';
+      if (gas) document.getElementById('price-gas').textContent = gas + '៛ / លីត្រ';
+    }
+  </script>
+</body>
+</html>
