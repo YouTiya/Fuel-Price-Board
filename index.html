@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/x-icon" href="https://z-p3-scontent.fpnh18-1.fna.fbcdn.net/v/t39.30808-6/537398187_1928873574578354_3774886075793829064_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=110&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeH4p8XFzdbxMJVfvy93JHurSssMyFJ7FddKywzIUnsV1yE0NDgqdpxlJWIecP704gHhgbWQHoYFUpbhucc-UIUg&_nc_ohc=HC--u4vhZxgQ7kNvwHWHmcE&_nc_oc=AdlJ4igNlUnB6dHFv-_PoRop84fa9jcH0cjFbg7U6PxB56-K-EKeXRsuLkEFE1OTJIw&_nc_zt=23&_nc_ht=z-p3-scontent.fpnh18-1.fna&_nc_gid=Wzc85HKH4OoWdkUdz2LGRw&oh=00_AfaWCbzbjWEP2lOcI-e9DXHbzmUTLUJXlV6KoFpT__LKug&oe=68D732D6">
   <title>Fuel Price Board</title>
   <style>
     body {
@@ -29,7 +28,6 @@
       overflow: hidden;
     }
 
-    /* Title and subtitle */
     .board h2 {
       font-size: 22px;
       margin-bottom: 6px;
@@ -50,8 +48,8 @@
       width: 100%;
       border-collapse: collapse;
       margin-bottom: 20px;
-      overflow: hidden;
       border-radius: 10px;
+      overflow: hidden;
     }
 
     table tr {
@@ -75,7 +73,6 @@
       font-size: 17px;
     }
 
-    /* Colors */
     .mogas { background: #e3f2fd; color: #0d47a1; }
     .super { background: #ffebee; color: #b71c1c; }
     .diesel { background: #e8f5e9; color: #1b5e20; }
@@ -84,7 +81,7 @@
     .location {
       border-top: 1px solid #ddd;
       padding-top: 12px;
-      font-size: 14px;
+      font-size: 13px;
       color: #555;
       background: #fafafa;
     }
@@ -96,7 +93,6 @@
       color: #666;
     }
 
-    /* Form */
     .editor {
       background: #fff;
       padding: 20px;
@@ -137,23 +133,32 @@
       border-radius: 8px;
       font-size: 15px;
       cursor: pointer;
+      margin-bottom: 10px;
     }
 
     .editor button:hover {
       background: #0066cc;
     }
 
-    /* Responsive */
-    @media (max-width: 480px) {
-      .board h2 { font-size: 18px; }
-      .board h3 { font-size: 14px; }
-      table td { font-size: 14px; padding: 10px; }
-      table td:last-child { font-size: 15px; }
+    .save-btn {
+      background: #28a745;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .save-btn:hover {
+      background: #218838;
     }
   </style>
 </head>
 <body>
-  <div class="board">
+  <!-- Fuel Board -->
+  <div class="board" id="fuelBoard">
     <h2 style="font-family: Khmer OS Muol Light;">ស្ថានីយប្រេងឥន្ធនៈ និង ហ្គាស អ៊ុំ សុគន្ធី</h2>
     <h3 style="font-family: Khmer OS Muol Light;">(ស្រុកក្រឡាញ់ ខេត្តសៀមរាប)</h3>
     
@@ -198,8 +203,11 @@
     <input type="number" id="gas" placeholder="Enter price...">
 
     <button onclick="updatePrices()">Update Board</button>
+    <button class="save-btn" onclick="saveBoard()">💾 Save as JPG</button>
   </div>
 
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
     function updatePrices() {
       let mogas = document.getElementById('mogas').value;
@@ -211,6 +219,16 @@
       if (super95) document.getElementById('price-super').textContent = super95 + '៛ / លីត្រ';
       if (diesel) document.getElementById('price-diesel').textContent = diesel + '៛ / លីត្រ';
       if (gas) document.getElementById('price-gas').textContent = gas + '៛ / លីត្រ';
+    }
+
+    function saveBoard() {
+      let board = document.getElementById("fuelBoard");
+      html2canvas(board, { backgroundColor: null }).then(canvas => {
+        let link = document.createElement("a");
+        link.download = "fuel-board.jpg";
+        link.href = canvas.toDataURL("image/jpeg", 1.0);
+        link.click();
+      });
     }
   </script>
 </body>
