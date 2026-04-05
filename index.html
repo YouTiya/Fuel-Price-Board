@@ -1,231 +1,476 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fuel Price Board</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modern Fuel Price Board</title>
+
   <style>
+    :root {
+      --bg-1: #0f172a;
+      --bg-2: #111827;
+      --card: rgba(255, 255, 255, 0.12);
+      --card-border: rgba(255, 255, 255, 0.18);
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+      --radius: 24px;
+
+      --mogas: linear-gradient(135deg, #38bdf8, #2563eb);
+      --super: linear-gradient(135deg, #fb7185, #e11d48);
+      --diesel: linear-gradient(135deg, #4ade80, #16a34a);
+      --gas: linear-gradient(135deg, #fbbf24, #f97316);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: "Khmer OS Battambang", Arial, sans-serif;
-      background: #f0f2f5;
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Khmer OS Battambang", "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.25), transparent 30%),
+        radial-gradient(circle at top right, rgba(236, 72, 153, 0.18), transparent 25%),
+        radial-gradient(circle at bottom center, rgba(34, 197, 94, 0.14), transparent 30%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      gap: 20px;
+      padding: 30px 16px;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 1180px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .glass {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
     }
 
     .board {
-      background: #fff;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-      max-width: 500px;
-      width: 100%;
-      margin-top: 1rem;
+      padding: 28px;
       overflow: hidden;
+      position: relative;
+    }
+
+    .board::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.02));
+      pointer-events: none;
+    }
+
+    .board-top {
+      position: relative;
+      z-index: 1;
+      margin-bottom: 22px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.16);
+      font-size: 13px;
+      color: #e2e8f0;
+      margin-bottom: 14px;
+    }
+
+    .board h1 {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.35;
+      font-family: "Khmer OS Muol Light", "Khmer OS Battambang", sans-serif;
+      color: #ffffff;
     }
 
     .board h2 {
+      margin: 8px 0 0;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--muted);
+      font-family: "Khmer OS Battambang", Arial, sans-serif;
+    }
+
+    .price-list {
+      display: grid;
+      gap: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 18px;
+      border-radius: 20px;
+      color: white;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.16);
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    .price-row:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 30px rgba(0,0,0,0.18);
+    }
+
+    .row-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
       font-size: 22px;
-      margin-bottom: 6px;
-      font-weight: bold;
-      color: #333;
-      text-align: center;
+      background: rgba(255,255,255,0.18);
+      flex-shrink: 0;
     }
 
-    .board h3 {
-      font-size: 16px;
-      font-weight: normal;
-      margin-bottom: 20px;
-      text-align: center;
-      color: #666;
+    .fuel-name {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-      border-radius: 10px;
-      overflow: hidden;
+    .fuel-sub {
+      font-size: 13px;
+      opacity: 0.9;
     }
 
-    table tr {
-      transition: all 0.2s ease;
-    }
-
-    table tr:hover {
-      transform: scale(1.02);
-      box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
-    }
-
-    table td {
-      padding: 12px 8px;
-      font-size: 16px;
-      color: #333;
-    }
-
-    table td:last-child {
+    .price-value {
+      font-size: 24px;
+      font-weight: 800;
+      white-space: nowrap;
       text-align: right;
-      font-weight: bold;
-      font-size: 17px;
     }
 
-    .mogas { background: #e3f2fd; color: #0d47a1; }
-    .super { background: #ffebee; color: #b71c1c; }
-    .diesel { background: #e8f5e9; color: #1b5e20; }
-    .gas   { background: #fff3e0; color: #e65100; }
+    .mogas { background: var(--mogas); }
+    .super { background: var(--super); }
+    .diesel { background: var(--diesel); }
+    .gas { background: var(--gas); }
 
     .location {
-      border-top: 1px solid #ddd;
-      padding-top: 12px;
-      font-size: 13px;
-      color: #555;
-      background: #fafafa;
+      position: relative;
+      z-index: 1;
+      margin-top: 22px;
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .location-title {
+      font-size: 14px;
+      color: #e2e8f0;
+      margin-bottom: 8px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .location p {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.65;
+      color: #f8fafc;
     }
 
     .location span {
       display: block;
-      margin-top: 6px;
+      margin-top: 8px;
       font-size: 13px;
-      color: #666;
+      color: var(--muted);
     }
 
     .editor {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      max-width: 500px;
-      width: 100%;
+      padding: 24px;
     }
 
-    .editor h4 {
-      margin-bottom: 10px;
-      text-align: center;
-      font-size: 16px;
+    .editor h3 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      color: white;
     }
 
-    .editor label {
-      display: block;
-      margin: 6px 0 2px;
-      font-size: 14px;
-      color: #333;
-    }
-
-    .editor input {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      margin-bottom: 10px;
+    .editor p {
+      margin: 0 0 22px;
+      color: var(--muted);
       font-size: 14px;
     }
 
-    .editor button {
-      background: #004d99;
-      color: #fff;
-      border: none;
-      padding: 10px;
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .input-group label {
+      font-size: 14px;
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+
+    .input-group input {
       width: 100%;
-      border-radius: 8px;
+      padding: 14px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.10);
+      color: white;
+      outline: none;
       font-size: 15px;
-      cursor: pointer;
-      margin-bottom: 10px;
+      transition: 0.2s ease;
     }
 
-    .editor button:hover {
-      background: #0066cc;
+    .input-group input::placeholder {
+      color: #cbd5e1;
+      opacity: 0.7;
     }
 
-    .save-btn {
-      background: #28a745;
-      color: #fff;
+    .input-group input:focus {
+      border-color: rgba(96, 165, 250, 0.9);
+      background: rgba(255,255,255,0.14);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.18);
+    }
+
+    .actions {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    button {
       border: none;
-      padding: 10px;
-      width: 100%;
-      border-radius: 8px;
+      border-radius: 16px;
+      padding: 14px 16px;
       font-size: 15px;
+      font-weight: 700;
       cursor: pointer;
+      transition: 0.2s ease;
     }
 
-    .save-btn:hover {
-      background: #218838;
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: white;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(37, 99, 235, 0.42);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #16a34a, #22c55e);
+      color: white;
+      box-shadow: 0 10px 24px rgba(34, 197, 94, 0.28);
+    }
+
+    .btn-success:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(34, 197, 94, 0.38);
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.08);
+      color: #cbd5e1;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 900px) {
+      .wrapper {
+        grid-template-columns: 1fr;
+      }
+
+      .board h1 {
+        font-size: 24px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .form-grid,
+      .actions {
+        grid-template-columns: 1fr;
+      }
+
+      .price-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .price-value {
+        width: 100%;
+        text-align: left;
+        font-size: 21px;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- Fuel Board -->
-  <div class="board" id="fuelBoard">
-    <h2 style="font-family: Khmer OS Muol Light;">ស្ថានីយប្រេងឥន្ធនៈ និង ហ្គាស អ៊ុំ សុគន្ធី</h2>
-    <h3 style="font-family: Khmer OS Muol Light;">(ស្រុកក្រឡាញ់ ខេត្តសៀមរាប)</h3>
-    
-    <table>
-      <tr class="mogas">
-        <td>⛽ សាំងធម្មតា (Mogas 92)</td>
-        <td id="price-mogas">3700៛ / លីត្រ</td>
-      </tr>
-      <tr class="super">
-        <td>🚀 សាំងស៊ុបពែរ (Super 95)</td>
-        <td id="price-super">4400៛ / លីត្រ</td>
-      </tr>
-      <tr class="diesel">
-        <td>🛻 ម៉ាស៊ូត (Diesel 90)</td>
-        <td id="price-diesel">3300៛ / លីត្រ</td>
-      </tr>
-      <tr class="gas">
-        <td>🔥 ហ្គាស (Gas)</td>
-        <td id="price-gas">1750៛ / លីត្រ</td>
-      </tr>
-    </table>
+  <div class="wrapper">
+    <!-- Fuel Board -->
+    <div class="board glass" id="fuelBoard">
+      <div class="board-top">
+        <div class="badge">⛽ Fuel Price Board</div>
+        <h1>ស្ថានីយប្រេងឥន្ធនៈ និង ហ្គាស អ៊ុំ សុគន្ធី</h1>
+        <h2>(ស្រុកក្រឡាញ់ ខេត្តសៀមរាប)</h2>
+      </div>
 
-    <div class="location">
-      🗺️ តាមបណ្ដោយផ្លូវជាតិលេខ 6 ជិតឆ្លងស្ពានចូលទៅកាន់ <strong>ខេត្ត​ បន្ទាយមានជ័យ</strong>
-      <span>🗺️ NR6, Border with Banteay Meanchey Province</span>
+      <div class="price-list">
+        <div class="price-row mogas">
+          <div class="row-left">
+            <div class="icon-box">⛽</div>
+            <div>
+              <div class="fuel-name">សាំងធម្មតា</div>
+              <div class="fuel-sub">Mogas 92</div>
+            </div>
+          </div>
+          <div class="price-value" id="price-mogas">3700៛ / លីត្រ</div>
+        </div>
+
+        <div class="price-row super">
+          <div class="row-left">
+            <div class="icon-box">🚀</div>
+            <div>
+              <div class="fuel-name">សាំងស៊ុបពែរ</div>
+              <div class="fuel-sub">Super 95</div>
+            </div>
+          </div>
+          <div class="price-value" id="price-super">4400៛ / លីត្រ</div>
+        </div>
+
+        <div class="price-row diesel">
+          <div class="row-left">
+            <div class="icon-box">🛻</div>
+            <div>
+              <div class="fuel-name">ម៉ាស៊ូត</div>
+              <div class="fuel-sub">Diesel 90</div>
+            </div>
+          </div>
+          <div class="price-value" id="price-diesel">3300៛ / លីត្រ</div>
+        </div>
+
+        <div class="price-row gas">
+          <div class="row-left">
+            <div class="icon-box">🔥</div>
+            <div>
+              <div class="fuel-name">ហ្គាស</div>
+              <div class="fuel-sub">Gas</div>
+            </div>
+          </div>
+          <div class="price-value" id="price-gas">1750៛ / លីត្រ</div>
+        </div>
+      </div>
+
+      <div class="location">
+        <div class="location-title">📍 Location</div>
+        <p>
+          🗺️ តាមបណ្ដោយផ្លូវជាតិលេខ 6 ជិតឆ្លងស្ពានចូលទៅកាន់
+          <strong>ខេត្ត បន្ទាយមានជ័យ</strong>
+        </p>
+        <span>NR6, Border with Banteay Meanchey Province</span>
+      </div>
+    </div>
+
+    <!-- Editor -->
+    <div class="editor glass">
+      <h3>Update Prices</h3>
+      <p>Enter the latest fuel prices below, then update or save the board as an image.</p>
+
+      <div class="form-grid">
+        <div class="input-group">
+          <label for="mogas">Mogas 92</label>
+          <input type="number" id="mogas" placeholder="Enter Mogas price" />
+        </div>
+
+        <div class="input-group">
+          <label for="super">Super 95</label>
+          <input type="number" id="super" placeholder="Enter Super price" />
+        </div>
+
+        <div class="input-group">
+          <label for="diesel">Diesel 90</label>
+          <input type="number" id="diesel" placeholder="Enter Diesel price" />
+        </div>
+
+        <div class="input-group">
+          <label for="gas">Gas</label>
+          <input type="number" id="gas" placeholder="Enter Gas price" />
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary" onclick="updatePrices()">Update Board</button>
+        <button class="btn-success" onclick="saveBoard()">💾 Save as JPG</button>
+      </div>
+
+      <div class="footer-note">
+        Tip: leave any input blank if you do not want to change that fuel price.
+      </div>
     </div>
   </div>
 
-  <!-- Price Editor -->
-  <div class="editor">
-    <h4>Update Prices</h4>
-    <label for="mogas">Mogas 92:</label>
-    <input type="number" id="mogas" placeholder="Enter price...">
-
-    <label for="super">Super 95:</label>
-    <input type="number" id="super" placeholder="Enter price...">
-
-    <label for="diesel">Diesel 90:</label>
-    <input type="number" id="diesel" placeholder="Enter price...">
-
-    <label for="gas">Gas:</label>
-    <input type="number" id="gas" placeholder="Enter price...">
-
-    <button onclick="updatePrices()">Update Board</button>
-    <button class="save-btn" onclick="saveBoard()">💾 Save as JPG</button>
-  </div>
-
-  <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
-    function updatePrices() {
-      let mogas = document.getElementById('mogas').value;
-      let super95 = document.getElementById('super').value;
-      let diesel = document.getElementById('diesel').value;
-      let gas = document.getElementById('gas').value;
+    function formatPrice(value) {
+      return value + "៛ / លីត្រ";
+    }
 
-      if (mogas) document.getElementById('price-mogas').textContent = mogas + '៛ / លីត្រ';
-      if (super95) document.getElementById('price-super').textContent = super95 + '៛ / លីត្រ';
-      if (diesel) document.getElementById('price-diesel').textContent = diesel + '៛ / លីត្រ';
-      if (gas) document.getElementById('price-gas').textContent = gas + '៛ / លីត្រ';
+    function updatePrices() {
+      const mogas = document.getElementById("mogas").value;
+      const super95 = document.getElementById("super").value;
+      const diesel = document.getElementById("diesel").value;
+      const gas = document.getElementById("gas").value;
+
+      if (mogas) document.getElementById("price-mogas").textContent = formatPrice(mogas);
+      if (super95) document.getElementById("price-super").textContent = formatPrice(super95);
+      if (diesel) document.getElementById("price-diesel").textContent = formatPrice(diesel);
+      if (gas) document.getElementById("price-gas").textContent = formatPrice(gas);
     }
 
     function saveBoard() {
-      let board = document.getElementById("fuelBoard");
-      html2canvas(board, { backgroundColor: null }).then(canvas => {
-        let link = document.createElement("a");
-        link.download = "fuel-board.jpg";
+      const board = document.getElementById("fuelBoard");
+
+      html2canvas(board, {
+        backgroundColor: null,
+        scale: 2
+      }).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "modern-fuel-board.jpg";
         link.href = canvas.toDataURL("image/jpeg", 1.0);
         link.click();
       });
